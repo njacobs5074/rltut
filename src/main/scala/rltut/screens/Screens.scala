@@ -29,7 +29,12 @@ class StartScreen extends Screen {
 class PlayScreen(screenWidth: Int = 80, screenHeight: Int = 21) extends Screen {
 
   private val world: World = new WorldBuilder(90, 31).makeCaves().build()
-  private val player: Creature = new CreatureFactory(world).newPlayer
+
+  private val creatureFactory = new CreatureFactory(world)
+  private val player: Creature = creatureFactory.newPlayer
+  for (_ <- 0 until 8) {
+    creatureFactory.newFungus
+  }
 
   private def getScrollX: Int =
     Math.max(0, Math.min(player.x - screenWidth / 2, world.width - screenWidth))
@@ -42,7 +47,11 @@ class PlayScreen(screenWidth: Int = 80, screenHeight: Int = 21) extends Screen {
       for (y <- 0 until screenHeight) {
         val wx = x + left
         val wy = y + top
-        terminal.write(world.glyph(wx, wy), x, y, world.color(wx, wy))
+
+        world
+          .creature(wx, wy)
+          .map(creature => terminal.write(creature.glyph, creature.x - left, creature.y - top, creature.color))
+          .getOrElse(terminal.write(world.glyph(wx, wy), x, y, world.color(wx, wy)))
       }
     }
   }
@@ -61,27 +70,35 @@ class PlayScreen(screenWidth: Int = 80, screenHeight: Int = 21) extends Screen {
     key.getKeyCode match {
       case KeyEvent.VK_LEFT | KeyEvent.VK_H =>
         player.moveBy(-1, 0)
+        world.update()
         this
       case KeyEvent.VK_RIGHT | KeyEvent.VK_L =>
         player.moveBy(1, 0)
+        world.update()
         this
       case KeyEvent.VK_UP | KeyEvent.VK_K =>
         player.moveBy(0, -1)
+        world.update()
         this
       case KeyEvent.VK_DOWN | KeyEvent.VK_J =>
         player.moveBy(0, 1)
+        world.update()
         this
       case KeyEvent.VK_Y =>
         player.moveBy(-1, -1)
+        world.update()
         this
       case KeyEvent.VK_U =>
         player.moveBy(1, -1)
+        world.update()
         this
       case KeyEvent.VK_B =>
         player.moveBy(-1, 1)
+        world.update()
         this
       case KeyEvent.VK_N =>
         player.moveBy(1, 1)
+        world.update()
         this
       case KeyEvent.VK_ESCAPE =>
         new LoseScreen

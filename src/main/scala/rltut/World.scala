@@ -4,6 +4,7 @@ import asciiPanel.AsciiPanel
 
 import java.awt.Color
 import scala.annotation.unused
+import scala.collection.mutable
 
 case class Tile(glyph: Char, color: Color) extends Enumeration {
   def isDiggable: Boolean = this == Tile.WALL
@@ -24,6 +25,8 @@ class World(tiles: Array[Array[Tile]]) {
   val width: Int = tiles.length
   val height: Int = tiles(0).length
 
+  private val creatures: mutable.ListBuffer[Creature] = mutable.ListBuffer.empty[Creature]
+
   def tile(x: Int, y: Int): Tile = {
     if (x < 0 || x >= width || y < 0 || y >= height) {
       Tile.BOUNDS
@@ -31,6 +34,8 @@ class World(tiles: Array[Array[Tile]]) {
       tiles(x)(y)
     }
   }
+
+  def creature(x: Int, y: Int): Option[Creature] = creatures.find(c => c.x == x && c.y == y)
 
   def glyph(x: Int, y: Int): Char = tile(x, y).glyph
   def color(x: Int, y: Int): Color = tile(x, y).color
@@ -52,6 +57,15 @@ class World(tiles: Array[Array[Tile]]) {
 
     creature.x = x
     creature.y = y
+    creatures += creature
+  }
+
+  def remove(creature: Creature): Unit = {
+    creatures -= creature
+  }
+
+  def update(): Unit = {
+    creatures.clone().foreach(_.update())
   }
 }
 
