@@ -65,6 +65,8 @@ class World(tiles: Array[Array[Tile]]) {
   }
 
   def update(): Unit = {
+    // We need to clone the creatures because their update methods
+    // can side-effect the original collection.
     creatures.clone().foreach(_.update())
   }
 }

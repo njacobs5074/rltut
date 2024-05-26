@@ -1,9 +1,9 @@
 package rltut
 
 import asciiPanel.AsciiPanel
-import rltut.screens.{Screen, StartScreen}
+import rltut.screens.{ Screen, StartScreen }
 
-import java.awt.event.{KeyEvent, KeyListener}
+import java.awt.event.{ KeyEvent, KeyListener }
 import javax.swing.JFrame
 
 /** See http://trystans.blogspot.com/2016/01/roguelike-tutorial-00-table-of-contents.html */
